@@ -33,7 +33,13 @@
 ### app/build.gradle
 
 ```
- dependencies {
+defaultConfig {
+    ...
+    minSdkVersion 21
+    ...    
+}
+
+dependencies {
     ...
     
     implementation 'android.br.com.uol.pagseguro:plugpag:4.9.4'
