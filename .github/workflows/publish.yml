@@ -6,9 +6,26 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
 
 jobs:
-  publish:
-    permissions:
-        id-token: write # Required for authentication using OIDC
-    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
-    # with:
-    #   working-directory: ./
+    publish:
+        name: 'Publish to pub.dev'
+        permissions:
+            id-token: write # This is required for requesting the JWT
+        runs-on: ubuntu-latest
+        steps:
+            # Checkout repository
+            - uses: actions/checkout@v3
+            - name: Flutter action
+              uses: subosito/flutter-action@v2
+              with:
+                flutter-version: '3.10.5'
+                channel: 'stable'
+            - name: Install dependencies
+              run: flutter pub get
+            - name: Analyze
+              run: flutter analyze
+            - name: Run tests
+              run: flutter test
+            - name: Publish - dry run
+              run: flutter pub publish --dry-run
+            - name: Publish to pub.dev
+              run: flutter pub publish -f
