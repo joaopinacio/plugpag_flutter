@@ -19,6 +19,9 @@ rootProject.allprojects {
         google()
         mavenCentral()
         maven { url 'https://github.com/pagseguromaster/plugpag/raw/master/4.x' }
+        // flatDir {
+        //     dirs project(':plugpag_flutter').file('libs')
+        // }
     }
 }
 
@@ -49,6 +52,8 @@ android {
     dependencies {
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
         testImplementation 'org.mockito:mockito-core:5.0.0'
+        implementation 'android.br.com.uol.pagseguro:plugpag:4.9.4'
+        // implementation (name: 'plugpag-4.9.4', ext: 'aar')
     }
 
     testOptions {
