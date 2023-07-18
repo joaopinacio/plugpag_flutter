@@ -1,5 +1,5 @@
 name: plugpag_flutter
-description: PagSeguro - Plugpag, agora no Flutter.
+description: PagSeguro - Plugpag, integração via bluetooth, com os leitores (Mini, Minizinha e Mobi Pin 10) e terminais (Moderninha Pro e Moderninha Wifi) agora no Flutter.
 version: 0.0.2
 homepage: https://github.com/joaopinacio
 repository: https://github.com/joaopinacio/plugpag_flutter
