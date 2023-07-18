@@ -1,3 +1,7 @@
+## 0.0.2
+
+* TODO: Plugpag Functions
+
 ## 0.0.1
 
-* TODO: Describe initial release.
+* TODO: Plugpag Functions
