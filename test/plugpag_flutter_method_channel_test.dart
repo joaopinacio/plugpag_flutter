@@ -1,11 +1,10 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:plugpag_flutter/plugpag_flutter_method_channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MethodChannelPlugpagFlutter platform = MethodChannelPlugpagFlutter(onState: (StatesPlugPag state) {});
+  // MethodChannelPlugpagFlutter platform = MethodChannelPlugpagFlutter(onState: (StatesPlugPag state) {});
   const MethodChannel channel = MethodChannel('plugpag_flutter');
 
   setUp(() {

@@ -89,7 +89,7 @@ class _DemoState extends State<Demo> {
                 child: const Text("Verificar o status da autenticacao"),
                 onPressed: () async {
                   var result = await plugpag.checkAuthentication();
-                  print(result);
+                  debugPrint('movieTitle: $result');
                 },
               ),
               const SizedBox(height: 30),
