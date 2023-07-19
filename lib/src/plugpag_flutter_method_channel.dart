@@ -5,14 +5,13 @@ import 'package:plugpag_flutter/src/models/method_channels.dart';
 
 import 'enums/plugpag_type_enum.dart';
 import 'models/state_plug_pag.dart';
-import 'plugpag_flutter_platform_interface.dart';
 
 ///
 /// [PlugpagFlutter] holds the functionality to integrate applications,
 /// via bluetooth, with PagSeguro readers, you can use the functionality
 /// described [here](https://pub.dev/packages/plugpag_flutter#usage)
 ///
-class PlugpagFlutter extends PlugpagFlutterPlatform {
+class PlugpagFlutter {
   /// onState
   final Function(StatePlugPag state) onState;
 
@@ -42,7 +41,6 @@ class PlugpagFlutter extends PlugpagFlutterPlatform {
   /// Throws a [PlatformException] if connecting to the remote api failed
   /// Throws a [MissingPluginException] if the method is not implemented on
   /// the native platforms.
-  @override
   Future<void> requestPermissions() async {
     try {
       await methodChannel.invokeMethod<void>(MethodNames.requestPermissions);
@@ -55,7 +53,6 @@ class PlugpagFlutter extends PlugpagFlutterPlatform {
   /// Throws a [PlatformException] if connecting to the remote api failed
   /// Throws a [MissingPluginException] if the method is not implemented on
   /// the native platforms.
-  @override
   Future<void> requestAuthentication() async {
     try {
       await methodChannel.invokeMethod<void>(MethodNames.requestAuthentication);
@@ -69,7 +66,6 @@ class PlugpagFlutter extends PlugpagFlutterPlatform {
   /// Throws a [PlatformException] if connecting to the remote api failed
   /// Throws a [MissingPluginException] if the method is not implemented on
   /// the native platforms.
-  @override
   Future<bool> checkAuthentication() async {
     try {
       return await methodChannel.invokeMethod<bool>(MethodNames.checkAuthentication) ?? false;
@@ -82,7 +78,6 @@ class PlugpagFlutter extends PlugpagFlutterPlatform {
   /// Throws a [PlatformException] if connecting to the remote api failed
   /// Throws a [MissingPluginException] if the method is not implemented on
   /// the native platforms.
-  @override
   Future<void> invalidateAuthentication() async {
     try {
       await methodChannel.invokeMethod<void>(MethodNames.invalidateAuthentication);
@@ -98,7 +93,6 @@ class PlugpagFlutter extends PlugpagFlutterPlatform {
   /// Throws a [PlatformException] if connecting to the remote api failed
   /// Throws a [MissingPluginException] if the method is not implemented on
   /// the native platforms.
-  @override
   Future<void> startPinpadDebitPayment(double amount) async {
     try {
       await methodChannel.invokeMethod<void>(MethodNames.startPinpadDebitPayment, convertDouble(amount));
@@ -112,7 +106,6 @@ class PlugpagFlutter extends PlugpagFlutterPlatform {
   /// Throws a [PlatformException] if connecting to the remote api failed
   /// Throws a [MissingPluginException] if the method is not implemented on
   /// the native platforms.
-  @override
   Future<void> startTerminalDebitPayment(double amount) async {
     try {
       await methodChannel.invokeMethod<void>(MethodNames.startTerminalDebitPayment, convertDouble(amount));

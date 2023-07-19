@@ -27,11 +27,11 @@ class Demo extends StatefulWidget {
 }
 
 class _DemoState extends State<Demo> {
-  late PlugpagFlutterPlatform plugpag;
+  late PlugpagFlutter plugpag;
   @override
   void initState() {
     super.initState();
-    plugpag = PlugpagFlutterPlatform.instance = PlugpagFlutter(onState: onState);
+    plugpag = PlugpagFlutter(onState: onState);
   }
 
   void onState(StatePlugPag state) async {

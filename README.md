@@ -1,6 +1,20 @@
 # plugpag_flutter
 
-# Setup - Android
+![Screenshot](https://assets.pagseguro.com.br/ps-bootstrap/v7.3.1/svg/pagbank/logo-pagbank.svg)
+
+## Installation
+
+To use this plugin, add `plugpag_flutter` as a [dependency](https://flutter.io/using-packages/) in your `pubspec.yaml` file like this
+
+```yaml
+dependencies:
+  plugpag_flutter:
+```
+This will get you the latest version.
+
+## Setup
+
+### Android
 
 #### AndroidManifest.xml
 
@@ -30,7 +44,7 @@
 </manifest>
 ```
 
-### app/build.gradle
+#### app/build.gradle
 
 ```
 defaultConfig {
@@ -47,3 +61,37 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
 }
 ```
+
+### IOS
+
+🚧 Under development 🚧
+
+## Usage
+
+To start using this package first import it in your Dart file.
+
+```dart
+import 'package:plugpag_flutter/plugpag_flutter.dart';
+```
+
+Initialize
+
+```dart
+var plugpag = PlugpagFlutter(onState: onState);
+```
+
+Basic example using it:
+
+```dart
+var plugpag = PlugpagFlutter(onState: (state) {});
+
+await plugpag.requestPermissions();
+await plugpag.requestAuthentication();
+await plugpag.startTerminalDebitPayment(2.00);
+```
+
+## Official Plugpag Docs
+
+- [Docs](https://dev.pagbank.uol.com.br/v1/reference/introducao)
+- [Android](https://dev.pagbank.uol.com.br/v1/reference/plugpag-android-introducao)
+- [IOS](https://dev.pagbank.uol.com.br/v1/reference/plugpag-ios-introducao)
