@@ -1,4 +1,8 @@
 # plugpag_flutter
+[![pub package](https://img.shields.io/badge/pub-0.0.3-orange)](https://pub.dev/packages/plugpag_flutter)
+[![stars](https://img.shields.io/github/stars/joaopinacio/plugpag_flutter?color=deeppink)](https://github.com/joaopinacio/plugpag_flutter)
+[![build](https://img.shields.io/github/actions/workflow/status/joaopinacio/plugpag_flutter/publish.yml)](https://github.com/joaopinacio/plugpag_flutter/actions?query=Publish%20to%20pub.dev)
+[![licence](https://img.shields.io/github/license/brim-borium/spotify_sdk?color=blue)](https://github.com/joaopinacio/plugpag_flutter/blob/main/LICENSE)
 
 ![Screenshot](https://assets.pagseguro.com.br/ps-bootstrap/v7.3.1/svg/pagbank/logo-pagbank.svg)
 
