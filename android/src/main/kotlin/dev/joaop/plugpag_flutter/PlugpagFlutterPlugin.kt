@@ -1,7 +1,7 @@
 package dev.joaop.plugpag_flutter
 
+import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.text.TextUtils
 import android.util.Log
@@ -13,12 +13,13 @@ import br.com.uol.pagseguro.plugpag.PlugPagAuthenticationListener
 import br.com.uol.pagseguro.plugpag.PlugPagPaymentData
 import br.com.uol.pagseguro.plugpag.PlugPagTransactionResult
 import br.com.uol.pagseguro.plugpag.PlugPagVoidData
+import dev.joaop.plugpag_flutter.presentation.auth.PlugPagAuthentication
+import dev.joaop.plugpag_flutter.presentation.permission.PlugPagPermission
 import dev.joaop.plugpag_flutter.task.PinpadPaymentTask
 import dev.joaop.plugpag_flutter.task.PinpadVoidPaymentTask
 import dev.joaop.plugpag_flutter.task.TerminalPaymentTask
 import dev.joaop.plugpag_flutter.task.TerminalQueryTransactionTask
 import dev.joaop.plugpag_flutter.task.TerminalVoidPaymentTask
-import io.flutter.embedding.android.FlutterActivity
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -34,9 +35,13 @@ class PlugpagFlutterPlugin: FlutterPlugin, MethodCallHandler, TaskHandler, PlugP
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
-  private val PERMISSIONS_REQUEST_CODE = 0
   private lateinit var channel : MethodChannel
   private lateinit var activity: Activity
+  private lateinit var plugpag : PlugPag
+
+  // Methods
+  private lateinit var plugpagAuth : PlugPagAuthentication
+  private lateinit var plugpagPerm : PlugPagPermission
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "plugpag_flutter")
@@ -46,6 +51,10 @@ class PlugpagFlutterPlugin: FlutterPlugin, MethodCallHandler, TaskHandler, PlugP
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     this.activity = binding.activity;
     PlugPagManager.create(activity)
+
+    this.plugpag = PlugPagManager.instance.plugPag
+    this.plugpagAuth = PlugPagAuthentication(plugpag)
+    this.plugpagPerm = PlugPagPermission(activity)
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
@@ -66,12 +75,12 @@ class PlugpagFlutterPlugin: FlutterPlugin, MethodCallHandler, TaskHandler, PlugP
       "getPlatformVersion" -> result.success("Android ${android.os.Build.VERSION.RELEASE}")
 
       // Permissions
-      "requestPermissions" -> this.requestPermissions()
+      "requestPermissions" -> this.plugpagPerm.requestPermissions()
 
       // Auth
-      "requestAuthentication" -> this.requestAuthentication()
+      "requestAuthentication" -> this.plugpagAuth.requestAuthentication(this)
       "checkAuthentication" -> this.checkAuthenticationResult(result)
-      "invalidateAuthentication" -> this.invalidateAuthentication()
+      "invalidateAuthentication" -> this.plugpagAuth.invalidateAuthentication()
 
       // Terminal
       "startTerminalCreditPayment" -> this.startTerminalCreditPayment(call.arguments as Int)
@@ -89,82 +98,10 @@ class PlugpagFlutterPlugin: FlutterPlugin, MethodCallHandler, TaskHandler, PlugP
       "startPinpadVoidPayment" -> this.startPinpadVoidPayment()
 
       // Transation
-      "cancelCurrentTransation" -> this.cancelCurrentTransation()
+      "cancelCurrentTransation" -> this.plugpagAuth.abort()
 
       else -> result.notImplemented()
     }
-  }
-
-  // -----------------------------------------------------------------------------------------------------------------
-  // Request missing permissions
-  // -----------------------------------------------------------------------------------------------------------------
-
-  /**
-   * Requests permissions on runtime, if any needed permission is not granted.
-   */
-  private fun requestPermissions() {
-    // Log.d("PLUGPAG_LOG", "Requested Permission 1")
-    var missingPermissions: Array<String>?
-
-    missingPermissions = this.filterMissingPermissions(this.getManifestPermissions())
-
-    if (missingPermissions != null && missingPermissions.isNotEmpty()) {
-      ActivityCompat.requestPermissions(this.activity, missingPermissions, PERMISSIONS_REQUEST_CODE)
-    } else {
-      this.showMessage("Todas permissões concedidas")
-    }
-  }
-
-  /**
-   * Returns a list of permissions requested on the AndroidManifest.xml file.
-   *
-   * @return Permissions requested on the AndroidManifest.xml file.
-   */
-  private fun getManifestPermissions(): Array<String> {
-    var permissions: Array<String>? = null
-    var info: PackageInfo?
-    var pm: PackageManager? = this.activity.packageManager
-
-    try {
-      info = pm?.getPackageInfo(this.activity.packageName, PackageManager.GET_PERMISSIONS)
-      permissions = info!!.requestedPermissions
-    } catch (e: PackageManager.NameNotFoundException) {
-
-    }
-
-    if (permissions == null) {
-      permissions = arrayOf()
-    }
-
-    return permissions
-  }
-
-  /**
-   * Filters only the permissions still not granted.
-   *
-   * @param permissions List of permissions to be checked.
-   * @return Permissions not granted.
-   */
-  private fun filterMissingPermissions(permissions: Array<String>?): Array<String>? {
-    var missingPermissions: Array<String>?
-    var list: MutableList<String>?
-
-    list = ArrayList()
-
-    if (!permissions.isNullOrEmpty()) {
-      for (permission in permissions) {
-        var perm = ContextCompat.checkSelfPermission(this.activity.applicationContext, permission)
-        // Log.d("PLUGPAG_LOG", "Permission: $permission - $perm")
-
-        if (perm != PackageManager.PERMISSION_GRANTED) {
-          list.add(permission)
-        }
-      }
-    }
-
-    missingPermissions = list.toTypedArray()
-
-    return missingPermissions
   }
 
   // -----------------------------------------------------------------------------------------------------------------
@@ -181,36 +118,7 @@ class PlugpagFlutterPlugin: FlutterPlugin, MethodCallHandler, TaskHandler, PlugP
   }
 
   private fun checkAuthentication(): Boolean {
-    var isAuthenticated = PlugPagManager.instance?.plugPag?.isAuthenticated ?: false
-    if (isAuthenticated) {
-      this.showMessage("Usuario autenticado")
-    } else {
-      this.showMessage("Usuario nao autenticado")
-    }
-
-    return isAuthenticated
-  }
-
-  /**
-   * Requests authentication.
-   */
-  private fun requestAuthentication() {
-    PlugPagManager.instance?.plugPag?.requestAuthentication(this)
-  }
-
-  /**
-   * Invalidates current authentication.
-   */
-  private fun invalidateAuthentication() {
-    PlugPagManager.instance?.plugPag?.invalidateAuthentication()
-  }
-
-
-  /**
-   * Invalidates current authentication.
-   */
-  private fun cancelCurrentTransation() {
-    PlugPagManager.instance?.plugPag?.abort();
+    return plugpagAuth.checkAuthentication()
   }
 
   // -----------------------------------------------------------------------------------------------------------------

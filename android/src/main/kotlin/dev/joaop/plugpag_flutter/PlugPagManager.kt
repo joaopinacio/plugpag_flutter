@@ -13,7 +13,7 @@ class PlugPagManager private constructor(appContext: Context) {
     // -----------------------------------------------------------------------------------------------------------------
     // Instance attributes
     // -----------------------------------------------------------------------------------------------------------------
-    var plugPag: PlugPag? = null
+    var plugPag: PlugPag
     // -----------------------------------------------------------------------------------------------------------------
     // Constructors
     // -----------------------------------------------------------------------------------------------------------------
@@ -48,11 +48,11 @@ class PlugPagManager private constructor(appContext: Context) {
          * @param appContext Application reference.
          * @return PlugPagManager singleton reference.
          */
-        fun create(appContext: Context): PlugPagManager? {
+        fun create(appContext: Context): PlugPagManager {
             if (sInstance == null) {
                 sInstance = PlugPagManager(appContext)
             }
-            return sInstance
+            return sInstance!!
         }
 
         /**
@@ -60,12 +60,12 @@ class PlugPagManager private constructor(appContext: Context) {
          *
          * @return PlugPagManager singleton reference.
          */
-        val instance: PlugPagManager?
+        val instance: PlugPagManager
             get() {
                 if (sInstance == null) {
                     throw RuntimeException("PlugPagManager not instantiated")
                 }
-                return sInstance
+                return sInstance!!
             }
     }
 }

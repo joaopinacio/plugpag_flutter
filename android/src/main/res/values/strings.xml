@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">PlugPag Android Demo</string>
+    <string name="app_name">PlugPag Flutter</string>
 
-    <string name="plugpag_app_identification">PlugPagDemo</string>
-    <string name="plugpag_app_version">0.0</string>
+    <string name="plugpag_app_identification">PlugPag Flutter</string>
+    <string name="plugpag_app_version">0.0.0</string>
     <string name="plugpag_user_reference">CODVENDA</string>
 
     <string name="txt_section_permissions">Permissões</string>
