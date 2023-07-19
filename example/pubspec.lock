@@ -168,7 +168,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.3"
+    version: "0.0.4-pre-release"
   process:
     dependency: transitive
     description:
