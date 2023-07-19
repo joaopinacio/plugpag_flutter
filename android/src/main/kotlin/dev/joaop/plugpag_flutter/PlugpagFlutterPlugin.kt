@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.text.TextUtils
+import android.util.Log
 import androidx.annotation.NonNull
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -20,24 +21,43 @@ import dev.joaop.plugpag_flutter.task.TerminalVoidPaymentTask
 import io.flutter.embedding.android.FlutterActivity
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
 /** PlugpagFlutterPlugin */
-class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler, TaskHandler, PlugPagAuthenticationListener {
+class PlugpagFlutterPlugin: FlutterPlugin, MethodCallHandler, TaskHandler, PlugPagAuthenticationListener, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
-  private val PERMISSIONS_REQUEST_CODE = 0x1234
+  private val PERMISSIONS_REQUEST_CODE = 0
   private lateinit var channel : MethodChannel
+  private lateinit var activity: Activity
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "plugpag_flutter")
     channel.setMethodCallHandler(this)
+  }
+
+  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    this.activity = binding.activity;
     PlugPagManager.create(activity)
+  }
+
+  override fun onDetachedFromActivityForConfigChanges() {
+    TODO("Not yet implemented")
+  }
+
+  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    TODO("Not yet implemented")
+  }
+
+  override fun onDetachedFromActivity() {
+    TODO("Not yet implemented")
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -46,11 +66,11 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
       "getPlatformVersion" -> result.success("Android ${android.os.Build.VERSION.RELEASE}")
 
       // Permissions
-      "requestPermission" -> this.requestPermissions()
+      "requestPermissions" -> this.requestPermissions()
 
       // Auth
       "requestAuthentication" -> this.requestAuthentication()
-      "checkAuthentication" -> this.checkAuthentication()
+      "checkAuthentication" -> this.checkAuthenticationResult(result)
       "invalidateAuthentication" -> this.invalidateAuthentication()
 
       // Terminal
@@ -83,12 +103,13 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
    * Requests permissions on runtime, if any needed permission is not granted.
    */
   private fun requestPermissions() {
+    // Log.d("PLUGPAG_LOG", "Requested Permission 1")
     var missingPermissions: Array<String>?
 
     missingPermissions = this.filterMissingPermissions(this.getManifestPermissions())
 
     if (missingPermissions != null && missingPermissions.isNotEmpty()) {
-      ActivityCompat.requestPermissions(this, missingPermissions, PERMISSIONS_REQUEST_CODE)
+      ActivityCompat.requestPermissions(this.activity, missingPermissions, PERMISSIONS_REQUEST_CODE)
     } else {
       this.showMessage("Todas permissões concedidas")
     }
@@ -102,10 +123,10 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
   private fun getManifestPermissions(): Array<String> {
     var permissions: Array<String>? = null
     var info: PackageInfo?
-    var pm: PackageManager? = this.context.packageManager
+    var pm: PackageManager? = this.activity.packageManager
 
     try {
-      info = pm?.getPackageInfo(this.context.packageName, PackageManager.GET_PERMISSIONS)
+      info = pm?.getPackageInfo(this.activity.packageName, PackageManager.GET_PERMISSIONS)
       permissions = info!!.requestedPermissions
     } catch (e: PackageManager.NameNotFoundException) {
 
@@ -132,7 +153,10 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
 
     if (!permissions.isNullOrEmpty()) {
       for (permission in permissions) {
-        if (ContextCompat.checkSelfPermission(this.context.applicationContext!!, permission) != PackageManager.PERMISSION_GRANTED) {
+        var perm = ContextCompat.checkSelfPermission(this.activity.applicationContext, permission)
+        // Log.d("PLUGPAG_LOG", "Permission: $permission - $perm")
+
+        if (perm != PackageManager.PERMISSION_GRANTED) {
           list.add(permission)
         }
       }
@@ -150,12 +174,21 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
   /**
    * Checks if a user is authenticated.
    */
-  private fun checkAuthentication(){
-    if (PlugPagManager.instance?.plugPag?.isAuthenticated!!) {
+  private fun checkAuthenticationResult(@NonNull result: Result){
+    Log.d("PLUGPAG_LOG", "Check Authentication")
+
+    result.success(checkAuthentication())
+  }
+
+  private fun checkAuthentication(): Boolean {
+    var isAuthenticated = PlugPagManager.instance?.plugPag?.isAuthenticated ?: false
+    if (isAuthenticated) {
       this.showMessage("Usuario autenticado")
     } else {
       this.showMessage("Usuario nao autenticado")
     }
+
+    return isAuthenticated
   }
 
   /**
@@ -188,6 +221,7 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
    * Starts a new credit payment on a terminal.
    */
   private fun startTerminalCreditPayment(amount: Int) {
+    if(!checkAuthentication()) return
     var paymentData: PlugPagPaymentData?
 
     paymentData = PlugPagPaymentData.Builder()
@@ -220,6 +254,8 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
    * Starts a new debit payment on a terminal.
    */
   private fun startTerminalDebitPayment(amount: Int) {
+    if(!checkAuthentication()) return
+
     var paymentData: PlugPagPaymentData?
 
     paymentData = PlugPagPaymentData.Builder()
@@ -297,6 +333,8 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
    * Starts a new debit payment on a pinpad.
    */
   private fun startPinpadDebitPayment(amount: Int) {
+    if(!checkAuthentication()) return
+
     var paymentData: PlugPagPaymentData?
 
     paymentData = PlugPagPaymentData.Builder()
@@ -368,7 +406,7 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
   private fun showMessage( message: Int) {
     var msg: String?
 
-    msg = this.getString(message)
+    msg = this.activity.getString(message)
     this.showMessage(msg)
   }
 
@@ -395,7 +433,7 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
   private fun showErrorMessage( message: Int) {
     var msg: String?
 
-    msg = this.getString(message)
+    msg = this.activity.getString(message)
     this.showErrorMessage(msg)
   }
 
@@ -428,7 +466,7 @@ class PlugpagFlutterPlugin: FlutterActivity(), FlutterPlugin, MethodCallHandler,
   private fun showProgressDialog(message: Int) {
     var msg: String?
 
-    msg = this.getString(message)
+    msg = this.activity.getString(message)
     this.showProgressDialog(msg)
   }
 

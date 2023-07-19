@@ -8,7 +8,7 @@ abstract class PlugpagFlutterPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static PlugpagFlutterPlatform _instance = MethodChannelPlugpagFlutter();
+  static PlugpagFlutterPlatform _instance = MethodChannelPlugpagFlutter(onState: (StatesPlugPag state) {});
 
   /// The default instance of [PlugpagFlutterPlatform] to use.
   ///
@@ -23,7 +23,76 @@ abstract class PlugpagFlutterPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+  // * Permission
+
+  Future<void> requestPermissions() {
+    throw UnimplementedError('requestPermissions() has not been implemented.');
+  }
+
+  // * Authentication
+
+  Future<void> requestAuthentication() {
+    throw UnimplementedError('requestAuthentication() has not been implemented.');
+  }
+
+  Future<bool> checkAuthentication() {
+    throw UnimplementedError('checkAuthentication() has not been implemented.');
+  }
+
+  Future<void> invalidateAuthentication() {
+    throw UnimplementedError('invalidateAuthentication() has not been implemented.');
+  }
+
+  // * Terminal (Pro ou similares)
+
+  Future<void> startTerminalCreditPayment(double amount) {
+    throw UnimplementedError('startTerminalCreditPayment() has not been implemented.');
+  }
+
+  Future<void> startTerminalCreditWithInstallmentsPayment(double amount, int installments) {
+    throw UnimplementedError('startTerminalCreditWithInstallmentsPayment() has not been implemented.');
+  }
+
+  Future<void> startTerminalDebitPayment(double amount) {
+    throw UnimplementedError('startTerminalDebitPayment() has not been implemented.');
+  }
+
+  Future<void> startTerminalVoucherPayment(double amount) {
+    throw UnimplementedError('startTerminalVoucherPayment() has not been implemented.');
+  }
+
+  Future<void> startTerminalVoidPayment() {
+    throw UnimplementedError('startTerminalVoidPayment() has not been implemented.');
+  }
+
+  Future<void> startTerminalQueryTransaction(double amount) {
+    throw UnimplementedError('startTerminalQueryTransaction() has not been implemented.');
+  }
+
+  // * Pinpad (Minizinha ou similares)
+
+  Future<void> startPinpadCreditPayment(double amount) {
+    throw UnimplementedError('startPinpadCreditPayment() has not been implemented.');
+  }
+
+  Future<void> startPinpadCreditWithInstallmentsPayment(double amount, int installments) {
+    throw UnimplementedError('startPinpadCreditWithInstallmentsPayment() has not been implemented.');
+  }
+
+  Future<void> startPinpadDebitPayment(double amount) {
+    throw UnimplementedError('startPinpadDebitPayment() has not been implemented.');
+  }
+
+  Future<void> startPinpadVoucherPayment(double amount) {
+    throw UnimplementedError('startPinpadVoucherPayment() has not been implemented.');
+  }
+
+  Future<void> startPinpadVoidPayment() {
+    throw UnimplementedError('startPinpadVoidPayment() has not been implemented.');
+  }
+
+  // * Transaction
+  Future<void> cancelCurrentTransation(double amount) {
+    throw UnimplementedError('cancelCurrentTransation() has not been implemented.');
   }
 }
