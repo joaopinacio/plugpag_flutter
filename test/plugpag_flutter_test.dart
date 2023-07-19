@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:plugpag_flutter/plugpag_flutter_platform_interface.dart';
-import 'package:plugpag_flutter/plugpag_flutter_method_channel.dart';
+import 'package:plugpag_flutter/plugpag_flutter.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockPlugpagFlutterPlatform with MockPlatformInterfaceMixin implements PlugpagFlutterPlatform {
@@ -108,8 +107,8 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final PlugpagFlutterPlatform initialPlatform = PlugpagFlutterPlatform.instance;
 
-  test('$MethodChannelPlugpagFlutter is the default instance', () {
-    expect(initialPlatform, isInstanceOf<MethodChannelPlugpagFlutter>());
+  test('$PlugpagFlutter is the default instance', () {
+    expect(initialPlatform, isInstanceOf<PlugpagFlutter>());
   });
 
   // test('getPlatformVersion', () async {

@@ -1,5 +1,6 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'models/state_plug_pag.dart';
 import 'plugpag_flutter_method_channel.dart';
 
 abstract class PlugpagFlutterPlatform extends PlatformInterface {
@@ -8,7 +9,7 @@ abstract class PlugpagFlutterPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static PlugpagFlutterPlatform _instance = MethodChannelPlugpagFlutter(onState: (StatesPlugPag state) {});
+  static PlugpagFlutterPlatform _instance = PlugpagFlutter(onState: (StatePlugPag state) {});
 
   /// The default instance of [PlugpagFlutterPlatform] to use.
   ///
@@ -23,13 +24,13 @@ abstract class PlugpagFlutterPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  // * Permission
+  /// * Permission
 
   Future<void> requestPermissions() {
     throw UnimplementedError('requestPermissions() has not been implemented.');
   }
 
-  // * Authentication
+  /// * Authentication
 
   Future<void> requestAuthentication() {
     throw UnimplementedError('requestAuthentication() has not been implemented.');
@@ -43,7 +44,7 @@ abstract class PlugpagFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('invalidateAuthentication() has not been implemented.');
   }
 
-  // * Terminal (Pro ou similares)
+  /// * Terminal (Pro ou similares)
 
   Future<void> startTerminalCreditPayment(double amount) {
     throw UnimplementedError('startTerminalCreditPayment() has not been implemented.');
@@ -69,7 +70,7 @@ abstract class PlugpagFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('startTerminalQueryTransaction() has not been implemented.');
   }
 
-  // * Pinpad (Minizinha ou similares)
+  /// * Pinpad (Minizinha ou similares)
 
   Future<void> startPinpadCreditPayment(double amount) {
     throw UnimplementedError('startPinpadCreditPayment() has not been implemented.');
@@ -91,7 +92,7 @@ abstract class PlugpagFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('startPinpadVoidPayment() has not been implemented.');
   }
 
-  // * Transaction
+  /// * Transaction
   Future<void> cancelCurrentTransation(double amount) {
     throw UnimplementedError('cancelCurrentTransation() has not been implemented.');
   }

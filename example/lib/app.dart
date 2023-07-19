@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plugpag_flutter/plugpag_flutter_method_channel.dart';
-import 'package:plugpag_flutter/plugpag_flutter_platform_interface.dart';
+import 'package:plugpag_flutter/plugpag_flutter.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -32,10 +31,10 @@ class _DemoState extends State<Demo> {
   @override
   void initState() {
     super.initState();
-    plugpag = PlugpagFlutterPlatform.instance = MethodChannelPlugpagFlutter(onState: onState);
+    plugpag = PlugpagFlutterPlatform.instance = PlugpagFlutter(onState: onState);
   }
 
-  void onState(StatesPlugPag state) async {
+  void onState(StatePlugPag state) async {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
@@ -45,7 +44,7 @@ class _DemoState extends State<Demo> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            if (state.type == Type.loading) const CircularProgressIndicator(),
+            if (state.type == PlugPagTypeEnum.loading) const CircularProgressIndicator(),
             Text(state.message),
           ],
         ),
