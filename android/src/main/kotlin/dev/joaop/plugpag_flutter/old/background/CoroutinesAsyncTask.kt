@@ -1,7 +1,7 @@
-package dev.joaop.plugpag_flutter.background
+package dev.joaop.plugpag_flutter.old.background
 
 import android.util.Log
-import dev.joaop.plugpag_flutter.background.Constant.Status
+import dev.joaop.plugpag_flutter.old.background.Constant.Status
 import kotlinx.coroutines.*
 import java.util.concurrent.Executors
 

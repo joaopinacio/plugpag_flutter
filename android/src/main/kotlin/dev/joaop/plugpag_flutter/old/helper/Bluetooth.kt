@@ -1,4 +1,4 @@
-package dev.joaop.plugpag_flutter.helper
+package dev.joaop.plugpag_flutter.old.helper
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice

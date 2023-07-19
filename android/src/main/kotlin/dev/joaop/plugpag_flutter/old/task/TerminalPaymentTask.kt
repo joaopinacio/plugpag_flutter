@@ -1,13 +1,13 @@
-package dev.joaop.plugpag_flutter.task
+package dev.joaop.plugpag_flutter.old.task
 
 import br.com.uol.pagseguro.plugpag.PlugPag
 import br.com.uol.pagseguro.plugpag.PlugPagDevice
 import br.com.uol.pagseguro.plugpag.PlugPagPaymentData
 import br.com.uol.pagseguro.plugpag.PlugPagTransactionResult
-import dev.joaop.plugpag_flutter.background.CoroutinesAsyncTask
-import dev.joaop.plugpag_flutter.PlugPagManager
-import dev.joaop.plugpag_flutter.TaskHandler
-import dev.joaop.plugpag_flutter.helper.Bluetooth
+import dev.joaop.plugpag_flutter.old.background.CoroutinesAsyncTask
+import dev.joaop.plugpag_flutter.old.PlugPagManager
+import dev.joaop.plugpag_flutter.old.helper.Bluetooth
+import dev.joaop.plugpag_flutter.old.TaskHandler
 
 class TerminalPaymentTask(handler: TaskHandler, taskName: String) : CoroutinesAsyncTask<PlugPagPaymentData?, String?, PlugPagTransactionResult?>(taskName) {
     // -----------------------------------------------------------------------------------------------------------------

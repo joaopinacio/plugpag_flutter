@@ -1,18 +1,20 @@
-package dev.joaop.plugpag_flutter.task
+package dev.joaop.plugpag_flutter.old.task
 
 import br.com.uol.pagseguro.plugpag.PlugPag
 import br.com.uol.pagseguro.plugpag.PlugPagDevice
 import br.com.uol.pagseguro.plugpag.PlugPagTransactionResult
-import dev.joaop.plugpag_flutter.background.CoroutinesAsyncTask
-import dev.joaop.plugpag_flutter.PlugPagManager
-import dev.joaop.plugpag_flutter.TaskHandler
-import dev.joaop.plugpag_flutter.helper.Bluetooth
+import br.com.uol.pagseguro.plugpag.PlugPagVoidData
+import dev.joaop.plugpag_flutter.old.background.CoroutinesAsyncTask
+import dev.joaop.plugpag_flutter.old.PlugPagManager
+import dev.joaop.plugpag_flutter.old.TaskHandler
+import dev.joaop.plugpag_flutter.old.helper.Bluetooth
 
-class TerminalQueryTransactionTask(handler: TaskHandler, taskName: String) : CoroutinesAsyncTask<Void?, Void?, PlugPagTransactionResult?>(taskName) {
+class TerminalVoidPaymentTask(handler: TaskHandler, taskName: String) : CoroutinesAsyncTask<Void?, String?, PlugPagTransactionResult?>(taskName) { //AsyncTask<Void?, String?, PlugPagTransactionResult?>() {
     // -----------------------------------------------------------------------------------------------------------------
     // Instance attributes
     // -----------------------------------------------------------------------------------------------------------------
     private var mHandler: TaskHandler? = null
+
     // -----------------------------------------------------------------------------------------------------------------
     // Constructors
     // -----------------------------------------------------------------------------------------------------------------
@@ -37,11 +39,27 @@ class TerminalQueryTransactionTask(handler: TaskHandler, taskName: String) : Cor
     }
 
     override fun doInBackground(vararg params: Void?): PlugPagTransactionResult? {
-        val result: PlugPagTransactionResult?
-        val plugpag: PlugPag? = PlugPagManager.instance?.plugPag
-        plugpag?.initBTConnection(PlugPagDevice(Bluetooth.terminal!!))
-        result = plugpag?.lastApprovedTransaction
-        return result
+        var result: PlugPagTransactionResult? = null
+        val plugpag: PlugPag?
+        try {
+            // Just update the Throbber
+            publishProgress("")
+            plugpag = PlugPagManager.instance?.plugPag
+            plugpag?.initBTConnection(PlugPagDevice(Bluetooth.terminal!!))
+            result = plugpag?.voidPayment()
+        } catch (e: Exception) {
+            publishProgress(e.message)
+        }
+        return result!!
+    }
+
+    override fun onProgressUpdate(vararg values: String?) {
+        super.onProgressUpdate(*values)
+        if (values != null && values.isNotEmpty() && values[0] != null) {
+            mHandler!!.onProgressPublished(
+                    values[0],
+                    PlugPagVoidData(".", "."))
+        }
     }
 
     override fun onPostExecute(result: PlugPagTransactionResult?) {

@@ -1,8 +1,9 @@
-package dev.joaop.plugpag_flutter
+package dev.joaop.plugpag_flutter.old
 
 import android.content.Context
 import br.com.uol.pagseguro.plugpag.PlugPag
 import br.com.uol.pagseguro.plugpag.PlugPagAppIdentification
+import dev.joaop.plugpag_flutter.R
 
 class PlugPagManager private constructor(appContext: Context) {
     /**

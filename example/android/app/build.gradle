@@ -74,4 +74,14 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2'
+
+    //Kodein DI
+    implementation "org.kodein.di:kodein-di-generic-jvm:6.5.5"
+    implementation "org.kodein.di:kodein-di-conf-jvm:6.5.5"
+    implementation "org.kodein.di:kodein-di-framework-android-core:6.5.5"
+    implementation "org.kodein.di:kodein-di-framework-android-x:6.5.5"
+
+    //Rx
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
 }
